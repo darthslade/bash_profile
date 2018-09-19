@@ -1,0 +1,127 @@
+source ~/.profile
+# The alias that takes me here - to editing these very aliases
+#show aliases
+alias a='echo "------------Your aliases------------";alias'
+alias c='clear'
+alias edit='mate'
+alias edit_profile='open -e ~/.profile'
+alias reload_profile=". ~/.bash_profile;say reloaded bash profile"
+alias ls='ls -G' ## Colorize the ls output ##
+# alias ll='ls -lAbhc'
+alias l='ls -lBohc'
+alias ll='ls -la' ## Use a long listing format ##
+alias vi=vim
+alias svi='sudo vi'
+alias vis='vim "+set si"'
+alias cl="fc -e -|pbcopy"
+alias ip="curl icanhazip.com"
+alias weather='curl -4 wttr.in/Tulsa'
+
+# This is GOLD for finding out what is taking so much space on your drives!
+alias diskspace="du -S | sort -n -r |more"
+alias flush='sudo killall -HUP mDNSResponder;say flushed'
+alias sites="cd ~/Sites"
+alias edit_hosts='edit /etc/hosts'
+alias edit_httpd='edit /etc/apache2/httpd.conf'
+alias edit_php='edit /etc/php.ini'
+alias edit_vhosts='edit /etc/apache2/extra/httpd-vhosts.conf'
+
+# This alias recursively destroys all .DS_Store files in the folder I am currently in
+alias killDS='find . -name *.DS_Store -type f -delete'
+
+# Homebrew: Daily maintenance
+#alias brew_update='brew update && brew upgrade --all && brew cleanup && brew doctor'
+alias brew_update='brew update; brew upgrade; brew cleanup; brew doctor'
+
+# finderShowHidden: Show hidden files in Finder
+# finderHideHidden: Hide hidden files in Finder
+# -------------------------------------------------------------------
+alias finderShowHidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
+alias finderHideHidden='defaults write com.apple.finder AppleShowAllFiles FALSE;killall Finder'
+
+toggleHiddenFiles(){
+    if [[ $(defaults read com.apple.finder AppleShowAllFiles) == TRUE ]]; then
+        defaults write com.apple.finder AppleShowAllFiles FALSE
+    else
+        defaults write com.apple.finder AppleShowAllFiles TRUE
+    fi
+    # kill finder triggers restart
+    killall Finder
+}
+
+toggleDesktopIcons(){
+    if [[ $(defaults read com.apple.finder CreateDesktop) == TRUE ]]; then
+	defaults write com.apple.finder CreateDesktop FALSE
+    else
+	defaults write com.apple.finder CreateDesktop TRUE
+    fi
+    # kill finder triggers restart
+    killall Finder
+}
+
+
+# HTML: Make an empty HTML file and open in editor
+# -------------------------------------------------------------------
+create() {
+    base=$(basename "$1")
+    fname="${base%.*}"
+    ext="${base##*.}"
+
+    # If $fname & $ext equal the same name, this isn't a filename, it's a directory
+    if [ $fname == $ext ]; then
+        mkdir -p $1 && cd $_ && open .
+    else
+        mkdir -p "${1%/*}" && cd $_ && touch "$fname.$ext" && open -a "Sublime Text" "$fname.$ext"
+    fi
+}
+
+export EDITOR="/usr/local/bin/mate -w"
+export PATH=/usr/local/bin:/Applications/MAMP/Library/bin:$PATH
+export PATH=~/bin:/Applications/MAMP/Library/bin:$PATH
+export PATH="$HOME/.composer/vendor/bin:$PATH"
+
+MAMP_PHP70=$(ls -1 /Applications/MAMP/bin/php | grep 'php7\.0\.' | sort -t. -k3 -g | tail -1)
+MAMP_PHP70_BIN="/Applications/MAMP/bin/php/$MAMP_PHP70/bin"
+if [ -d "$MAMP_PHP70_BIN" ]; then
+  export PATH="$MAMP_PHP70_BIN:$PATH"
+  #export DRUSH_PHP="$MAMP_PHP70_BIN/php"
+fi
+
+export PATH="/Users/jhooper/Sites/oseberg.io/drupal/vendor/bin:$PATH"
+
+export PATH="$HOME/.nodenv/bin:$PATH"
+
+eval "$(nodenv init -)"
+
+
+# Atom
+# -------------------------------------------------------------------
+alias atom='open -a "Atom"'
+
+# Git
+# -------------------------------------------------------------------
+# You must install Git first - ""
+alias gs='git status'
+alias ga='git add .'
+
+# requires you to type a commit message
+alias gc='git commit -m'
+alias gp='git push'
+alias gpom='git pull origin master'
+alias gl="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit"
+
+# requires you type the commit id
+alias gshow='git show --pretty="format:" --name-only'
+alias gcam='git commit -am'
+alias gamend='git commit --amend'
+alias gtag='git tag -a'
+alias gtagf='git tag -f server-up-to-date'
+
+# Get a count of total git commits
+alias gcount='git log --oneline --all | wc -l'
+
+alias gitgraph='git log --graph --oneline --decorate --date=relative --all'
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
+eval "$(direnv hook bash)"
